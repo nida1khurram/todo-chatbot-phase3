@@ -1,0 +1,37 @@
+# Allow unused variables when they start with an underscore
+extend-ignore = [
+    "PLR",  # Design related pylint codes
+]
+line-length = 88
+target-version = "py39"
+
+[lint]
+select = [
+    "E",  # pycodestyle errors
+    "W",  # pycodestyle warnings
+    "F",  # pyflakes
+    "I",  # isort
+    "C",  # flake8-comprehensions
+    "B",  # flake8-bugbear
+]
+
+ignore = [
+    "E501",  # Line too long (handled by black)
+]
+
+[lint.per-file-ignores]
+"__init__.py" = ["F401"]
+
+[format]
+# Like Black, use double quotes for strings.
+quote-style = "double"
+
+# Like Black, indent with spaces, rather than tabs.
+indent-style = "space"
+
+# Like Black, respect magic trailing commas.
+skip-magic-trailing-comma = false
+
+# Add trailing commas to single-element tuples and function arguments
+# Similar to Black's behavior
+line-ending = "auto"
