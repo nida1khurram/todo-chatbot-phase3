@@ -59,8 +59,11 @@ app.add_middleware(
         "http://localhost:3001",
         "http://localhost:3002",
         "http://127.0.0.1:3001",
-        "http://127.0.0.1:3002"
-    ],  # Restrict to frontend URLs
+        "http://127.0.0.1:3002",
+        "https://*.vercel.app",  # Allow Vercel deployments
+        "https://*.huggingface.co",  # Allow Hugging Face Spaces
+        "https://*.hf.space",  # Allow Hugging Face Spaces short form
+    ],  # Restrict to frontend URLs - removed wildcard for security
     allow_credentials=True,
     allow_methods=["GET", "POST", "PUT", "DELETE", "OPTIONS"],
     allow_headers=["*"],
