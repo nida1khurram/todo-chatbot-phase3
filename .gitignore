@@ -1,0 +1,103 @@
+# Python
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+.Python
+env/
+venv/
+.venv/
+pip-log.txt
+pip-delete-this-directory.txt
+.tox/
+.coverage
+.coverage.*
+.cache
+nosetests.xml
+coverage.xml
+*.cover
+*.log
+.git/modules/
+.pytest_cache/
+.hypothesis/
+
+# FastAPI/Backend
+backend/__pycache__/
+backend/*.pyc
+backend/staticfiles/
+backend/.env
+backend/.env.local
+backend/.env.development
+backend/.env.test
+backend/instance/
+backend/.webassets-cache
+backend/*.db
+backend/*.db-journal
+backend/.pytest/
+backend/.coverage
+
+# Node.js/Frontend
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+.pnp/
+.pnp.js
+.next/
+out/
+dist/
+build/
+.nuxt/
+.cache/
+.output/
+coverage/
+.nyc_output/
+jspm_packages/
+web-build/
+*.tsbuildinfo
+
+# Next.js
+.next/
+out/
+.next/cache/
+
+# Environment variables
+.env*
+!.env.example
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+.DS_Store
+Thumbs.db
+
+# OS
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+Icon?
+VolumeIcon.icns
+
+# Logs
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+lerna-debug.log*
+
+# Runtime data
+pids/
+*.pid
+*.seed
+*.pid.lock
+
+# Coverage directory used by tools like istanbul
+coverage/
+lib-cov/

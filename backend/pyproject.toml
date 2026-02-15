@@ -1,0 +1,76 @@
+[project]
+name = "todo_backend"
+version = "0.1.0"
+description = "Todo application backend with FastAPI and SQLModel"
+requires-python = ">=3.9"
+dependencies = [
+    "fastapi>=0.104.1",
+    "uvicorn>=0.24.0",
+    "sqlmodel>=0.0.16",
+    "pydantic>=2.5.0",
+    "pydantic-settings>=2.1.0",
+    "passlib>=1.7.4",
+    "bcrypt>=4.0.1",
+    "python-jose>=3.3.0",
+    "cryptography>=41.0.8",
+    "better-exceptions>=0.3.3",
+    "python-multipart>=0.0.6",
+    "asyncpg>=0.29.0",  # For PostgreSQL async support
+    "alembic>=1.13.1",
+    "python-dotenv>=1.0.0",
+    "mcp>=1.0.0",  # For Model Context Protocol server
+]
+
+[project.optional-dependencies]
+dev = [
+    "pytest>=7.4.0",
+    "pytest-asyncio>=0.21.0",
+    "pytest-cov>=4.1.0",
+    "httpx>=0.25.0",
+    "black>=23.0.0",
+    "ruff>=0.1.0",
+    "mypy>=1.5.0",
+    "pre-commit>=3.5.0",
+]
+
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[tool.hatch.build.targets.wheel]
+packages = ["src"]
+
+[tool.ruff]
+line-length = 88
+target-version = "py39"
+
+[tool.ruff.lint]
+select = [
+    "E",  # pycodestyle errors
+    "W",  # pycodestyle warnings
+    "F",  # pyflakes
+    "I",  # isort
+    "C",  # flake8-comprehensions
+    "B",  # flake8-bugbear
+]
+ignore = [
+    "E501",  # Line too long (handled by black)
+]
+
+[tool.ruff.lint.per-file-ignores]
+"__init__.py" = ["F401"]
+
+[tool.black]
+line-length = 88
+target-version = ['py39']
+skip-string-normalization = true
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+asyncio_mode = "auto"
+
+[tool.mypy]
+python_version = "3.9"
+warn_return_any = true
+warn_unused_configs = true
+disallow_untyped_defs = true

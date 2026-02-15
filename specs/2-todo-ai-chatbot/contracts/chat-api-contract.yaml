@@ -1,0 +1,262 @@
+# Todo AI Chatbot API Contract
+
+## Overview
+This document defines the API contract for the Todo AI Chatbot feature, specifying endpoints, request/response formats, and authentication requirements.
+
+## Base URL
+```
+https://api.yourapp.com/api
+```
+
+## Authentication
+All endpoints require JWT authentication in the Authorization header:
+```
+Authorization: Bearer {jwt_token}
+```
+
+## Endpoints
+
+### POST /{user_id}/chat
+Initiates or continues a conversation with the AI assistant for todo management.
+
+#### Request
+- **Method**: POST
+- **Path**: `/api/{user_id}/chat`
+- **Headers**:
+  - `Authorization: Bearer {jwt_token}`
+  - `Content-Type: application/json`
+
+- **Path Parameters**:
+  - `user_id` (string): The ID of the authenticated user
+
+- **Body**:
+```json
+{
+  "message": "string, required - The user's message to the AI assistant",
+  "conversation_id": "integer, optional - ID of existing conversation to continue, or null to start new"
+}
+```
+
+#### Response
+- **Success Response (200 OK)**:
+```json
+{
+  "conversation_id": "integer - ID of the conversation",
+  "response": "string - AI assistant's response to the user's message",
+  "tool_calls": [
+    {
+      "id": "string - Tool call identifier",
+      "function": {
+        "name": "string - Name of the MCP tool called (add_task, list_tasks, complete_task, delete_task, update_task)",
+        "arguments": "object - Arguments passed to the tool"
+      }
+    }
+  ]
+}
+```
+
+- **Error Responses**:
+  - `400 Bad Request`: Invalid request format
+  - `401 Unauthorized`: Invalid or missing JWT token
+  - `403 Forbidden`: User attempting to access another user's chat
+  - `404 Not Found`: Conversation not found
+  - `500 Internal Server Error`: Server error processing request
+
+#### Example Request
+```json
+{
+  "message": "Add a task to buy groceries",
+  "conversation_id": null
+}
+```
+
+#### Example Response
+```json
+{
+  "conversation_id": 123,
+  "response": "I've added a task 'buy groceries' to your list.",
+  "tool_calls": [
+    {
+      "id": "call_add_task_abc123",
+      "function": {
+        "name": "add_task",
+        "arguments": {
+          "user_id": "123",
+          "title": "buy groceries"
+        }
+      }
+    }
+  ]
+}
+```
+
+### GET /{user_id}/conversations/{conversation_id}/history
+Retrieves the message history for a specific conversation.
+
+#### Request
+- **Method**: GET
+- **Path**: `/api/{user_id}/conversations/{conversation_id}/history`
+- **Headers**:
+  - `Authorization: Bearer {jwt_token}`
+
+- **Path Parameters**:
+  - `user_id` (string): The ID of the authenticated user
+  - `conversation_id` (integer): The ID of the conversation to retrieve history for
+
+#### Response
+- **Success Response (200 OK)**:
+```json
+{
+  "conversation_id": "integer - ID of the conversation",
+  "messages": [
+    {
+      "id": "integer - Message ID",
+      "user_id": "integer - ID of the user who sent the message",
+      "role": "string - Role of the sender ('user' or 'assistant')",
+      "content": "string - Content of the message",
+      "created_at": "string - ISO 8601 timestamp of when message was created"
+    }
+  ]
+}
+```
+
+- **Error Responses**:
+  - `401 Unauthorized`: Invalid or missing JWT token
+  - `403 Forbidden`: User attempting to access another user's conversation
+  - `404 Not Found`: Conversation not found
+  - `500 Internal Server Error`: Server error retrieving history
+
+#### Example Response
+```json
+{
+  "conversation_id": 123,
+  "messages": [
+    {
+      "id": 1,
+      "user_id": 123,
+      "role": "user",
+      "content": "Add a task to buy groceries",
+      "created_at": "2023-12-01T10:00:00Z"
+    },
+    {
+      "id": 2,
+      "user_id": 123,
+      "role": "assistant",
+      "content": "I've added a task 'buy groceries' to your list.",
+      "created_at": "2023-12-01T10:00:05Z"
+    }
+  ]
+}
+```
+
+## MCP Tool Contracts
+
+The following tools are available for the AI assistant to call via the MCP server:
+
+### add_task
+- **Purpose**: Create a new task for the authenticated user
+- **Input**:
+```json
+{
+  "user_id": "string, required - from authenticated context",
+  "title": "string, required - The title of the task",
+  "description": "string, optional - The description of the task"
+}
+```
+- **Output**:
+```json
+{
+  "task_id": "integer - The ID of the created task",
+  "status": "string - Status of the operation ('created')",
+  "title": "string - The title of the created task"
+}
+```
+
+### list_tasks
+- **Purpose**: Retrieve tasks from the list for the authenticated user
+- **Input**:
+```json
+{
+  "user_id": "string, required - from authenticated context",
+  "status": "string, optional - Filter by status ('all', 'pending', 'completed'), defaults to 'all'"
+}
+```
+- **Output**:
+```json
+[
+  {
+    "id": "integer - The ID of the task",
+    "title": "string - The title of the task",
+    "completed": "boolean - Whether the task is completed"
+  }
+]
+```
+
+### complete_task
+- **Purpose**: Mark a task as complete for the authenticated user
+- **Input**:
+```json
+{
+  "user_id": "string, required - from authenticated context",
+  "task_id": "integer, required - The ID of the task to mark as complete"
+}
+```
+- **Output**:
+```json
+{
+  "task_id": "integer - The ID of the completed task",
+  "status": "string - Status of the operation ('completed')",
+  "title": "string - The title of the completed task"
+}
+```
+
+### delete_task
+- **Purpose**: Remove a task from the list for the authenticated user
+- **Input**:
+```json
+{
+  "user_id": "string, required - from authenticated context",
+  "task_id": "integer, required - The ID of the task to delete"
+}
+```
+- **Output**:
+```json
+{
+  "task_id": "integer - The ID of the deleted task",
+  "status": "string - Status of the operation ('deleted')",
+  "title": "string - The title of the deleted task"
+}
+```
+
+### update_task
+- **Purpose**: Modify task title or description for the authenticated user
+- **Input**:
+```json
+{
+  "user_id": "string, required - from authenticated context",
+  "task_id": "integer, required - The ID of the task to update",
+  "title": "string, optional - The new title for the task",
+  "description": "string, optional - The new description for the task"
+}
+```
+- **Output**:
+```json
+{
+  "task_id": "integer - The ID of the updated task",
+  "status": "string - Status of the operation ('updated')",
+  "title": "string - The updated title of the task"
+}
+```
+
+## Rate Limiting
+All endpoints are subject to rate limiting:
+- 100 requests per minute per user
+- 1000 requests per minute per IP address
+
+## Error Format
+All error responses follow this format:
+```json
+{
+  "detail": "string - Human-readable error message"
+}
+```
