@@ -183,11 +183,69 @@ This project is currently in Phase III (AI-Powered Todo Chatbot). The applicatio
 
 ## Deployment
 
-The application can be deployed by:
-1. Setting up environment variables for production
-2. Deploying the backend to a cloud provider (AWS, GCP, Azure, etc.)
-3. Building and deploying the frontend to a static hosting service (Vercel, Netlify, etc.)
-4. Configuring the database connection for production
+### Backend Deployment
+
+The backend can be deployed to various platforms. Here are instructions for popular options:
+
+#### Deploying to Hugging Face Spaces (Recommended for this project)
+
+1. Create a Hugging Face account if you don't have one
+2. Create a new Space with the "Docker" or "Gradio" runner
+3. Add your API keys to Space Secrets:
+   - `OPENAI_API_KEY`: Your OpenAI API key (or leave blank if using OpenRouter)
+   - `OPENROUTER_API_KEY`: Your OpenRouter API key (or leave blank if using OpenAI)
+   - `SECRET_KEY`: A strong, random secret key for JWT tokens
+   - `DATABASE_URL`: PostgreSQL connection string
+4. Clone this repository and modify the Dockerfile if needed
+5. The backend will be accessible at `https://YOUR_USERNAME-hac2-chatbot.hf.space`
+
+#### Deploying to Railway
+
+1. Create a Railway account and link it to your GitHub
+2. Create a new project and import this repository
+3. Set the following environment variables in Railway:
+   - `OPENAI_API_KEY`: Your OpenAI API key (or leave blank if using OpenRouter)
+   - `OPENROUTER_API_KEY`: Your OpenRouter API key (or leave blank if using OpenAI)
+   - `SECRET_KEY`: A strong, random secret key for JWT tokens
+   - `DATABASE_URL`: PostgreSQL connection string
+4. Deploy the project
+5. The backend will be accessible at the Railway-generated URL
+
+#### Deploying to Render
+
+1. Create a Render account and connect your GitHub
+2. Create a new Web Service and select this repository
+3. Set the following environment variables:
+   - `OPENAI_API_KEY`: Your OpenAI API key (or leave blank if using OpenRouter)
+   - `OPENROUTER_API_KEY`: Your OpenRouter API key (or leave blank if using OpenAI)
+   - `SECRET_KEY`: A strong, random secret key for JWT tokens
+   - `DATABASE_URL`: PostgreSQL connection string
+4. Set the build command to: `pip install -r requirements.txt`
+5. Set the start command to: `uvicorn src.main:app --host 0.0.0.0 --port $PORT`
+6. Deploy the service
+
+### Frontend Deployment
+
+#### Deploying to Vercel (Recommended)
+
+1. Create a Vercel account and link it to your GitHub
+2. Create a new project and import this repository
+3. Set the following environment variable in Vercel:
+   - `NEXT_PUBLIC_API_URL`: The URL of your deployed backend (e.g., `https://your-backend.onrender.com`)
+4. The frontend will be accessible at the Vercel-generated URL
+
+### Important Notes for Deployment
+
+1. **CORS Configuration**: The backend is configured to allow requests from:
+   - Local development: `http://localhost:3000`, `http://127.0.0.1:3000`, etc.
+   - Vercel deployments: `https://*.vercel.app`
+   - Hugging Face Spaces: `https://*.huggingface.co`, `https://*.hf.space`
+
+2. **Environment Variables**: Make sure to set all required environment variables as secrets in your deployment platform rather than hardcoding them.
+
+3. **Database**: Ensure your PostgreSQL database is accessible from your deployed backend.
+
+4. **API Keys**: Never commit API keys to version control. Always use environment variables or platform-specific secrets management.
 
 ## API Testing
 
